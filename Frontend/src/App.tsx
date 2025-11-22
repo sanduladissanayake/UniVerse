@@ -5,6 +5,9 @@ import { Navigation } from './components/layout/Navigation';
 
 // Pages
 import { HomePage } from './pages/HomePage';
+import { Login } from './components/auth/Login';
+import { Register } from './components/auth/Register';
+
 //additional imports can be added here
 const App: React.FC = () => {
   return (
@@ -19,8 +22,10 @@ const App: React.FC = () => {
               
               {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
               
-                        
+              
               {/* Catch all - redirect to home */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

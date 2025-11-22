@@ -17,19 +17,13 @@ export enum UserRole {
   FACULTY = 'FACULTY'
 }
 
-export enum EventType {
-  WORKSHOP = 'WORKSHOP',
-  SEMINAR = 'SEMINAR',
-  MEETING = 'MEETING',
-  SOCIAL = 'SOCIAL',
-  COMPETITION = 'COMPETITION',
-  CONFERENCE = 'CONFERENCE',
-  FUNDRAISER = 'FUNDRAISER',
-  VOLUNTEER = 'VOLUNTEER',
-  SPORTS = 'SPORTS',
-  CULTURAL = 'CULTURAL'
-}
 
+export enum AnnouncementPriority {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  URGENT = 'URGENT'
+}
 
 export interface SocialLinks {
   facebook?: string;
@@ -37,6 +31,13 @@ export interface SocialLinks {
   instagram?: string;
   linkedin?: string;
   youtube?: string;
+}
+
+export interface ContactInfo {
+  email: string;
+  phone?: string;
+  address?: string;
+  officeHours?: string;
 }
 
 // API Response types
@@ -54,7 +55,13 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
-
+export interface CreateAnnouncementForm {
+  title: string;
+  content: string;
+  priority: AnnouncementPriority;
+  targetAudience: string[];
+  expiryDate?: string;
+}
 
 // Navigation types
 export type NavigationPage = 'home' | 'events' | 'clubs' | 'announcements' | 'contact' | 'profile' | 'dashboard';
