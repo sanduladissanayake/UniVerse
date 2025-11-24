@@ -18,6 +18,20 @@ export enum UserRole {
 }
 
 
+export interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  priority: AnnouncementPriority;
+  isActive: boolean;
+  targetAudience: string[];
+  // club?: Club;
+  author: User;
+  expiryDate?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export enum AnnouncementPriority {
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
@@ -54,6 +68,7 @@ export interface PaginatedResponse<T> {
   limit: number;
   totalPages: number;
 }
+
 
 export interface CreateAnnouncementForm {
   title: string;
