@@ -2,6 +2,8 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { Navigation } from './components/layout/Navigation';
+import { EventList } from './components/events/EventList';
+import { EventDetails } from './components/events/EventDetails';
 
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
@@ -29,7 +31,9 @@ const App: React.FC = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               
-              
+              {/* Events Routes */}
+              <Route path="/events" element={<EventList />} />
+              <Route path="/events/:id" element={<EventDetails />} />
             
               
               {/* Protected Admin Routes */}
