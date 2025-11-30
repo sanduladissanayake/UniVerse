@@ -104,6 +104,21 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
+export interface CreateEventForm {
+  title: string;
+  description: string;
+  eventDate: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  venue?: string;
+  maxAttendees?: number;
+  registrationDeadline?: string;
+  isPublic: boolean;
+  requiresRegistration: boolean;
+  eventType: EventType;
+  imageUrl?: string;
+}
 
 export interface CreateAnnouncementForm {
   title: string;

@@ -85,6 +85,15 @@ ON DUPLICATE KEY UPDATE email=email;
 -- Step 4: Verification Queries
 -- ======================
 
+-- Insert sample events
+INSERT INTO events (title, description, event_date, location, club_id, created_by) VALUES
+('Hackathon 2025', '24-hour coding competition with amazing prizes!', '2025-12-20 09:00:00', 'Computer Lab A', 1, NULL),
+('Photo Walk', 'Explore the campus and capture beautiful moments.', '2025-12-18 15:00:00', 'Main Campus', 2, NULL),
+('Concert Night', 'Live performances by talented student musicians.', '2025-12-22 18:00:00', 'University Auditorium', 3, NULL),
+('Debate Championship', 'Inter-university debate competition.', '2025-12-25 14:00:00', 'Conference Hall', 4, NULL),
+('Sports Day', 'Annual sports day with various competitive events.', '2026-01-10 08:00:00', 'Sports Complex', 5, NULL)
+ON DUPLICATE KEY UPDATE title=title;
+
 -- Check if tables are created
 SELECT 'Tables created successfully' AS status;
 SELECT COUNT(*) as user_count FROM users;
