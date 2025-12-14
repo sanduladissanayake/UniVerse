@@ -17,6 +17,41 @@ export enum UserRole {
   FACULTY = 'FACULTY'
 }
 
+export interface Event {
+  id: string;
+  title: string;
+  description: string;
+  eventDate: Date;
+  startTime: string;
+  endTime: string;
+  location: string;
+  venue?: string;
+  maxAttendees?: number;
+  currentAttendees: number;
+  registrationDeadline?: Date;
+  isPublic: boolean;
+  requiresRegistration: boolean;
+  eventType: EventType;
+  imageUrl?: string;
+  //club: Club;
+  organizer: User;
+  attendees: User[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export enum EventType {
+  WORKSHOP = 'WORKSHOP',
+  SEMINAR = 'SEMINAR',
+  MEETING = 'MEETING',
+  SOCIAL = 'SOCIAL',
+  COMPETITION = 'COMPETITION',
+  CONFERENCE = 'CONFERENCE',
+  FUNDRAISER = 'FUNDRAISER',
+  VOLUNTEER = 'VOLUNTEER',
+  SPORTS = 'SPORTS',
+  CULTURAL = 'CULTURAL'
+}
 
 export interface Announcement {
   id: string;
@@ -69,6 +104,21 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
+export interface CreateEventForm {
+  title: string;
+  description: string;
+  eventDate: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  venue?: string;
+  maxAttendees?: number;
+  registrationDeadline?: string;
+  isPublic: boolean;
+  requiresRegistration: boolean;
+  eventType: EventType;
+  imageUrl?: string;
+}
 
 export interface CreateAnnouncementForm {
   title: string;
