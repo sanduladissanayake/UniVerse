@@ -87,42 +87,54 @@ export const ClubList: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">University Clubs</h1>
-        <p className="text-gray-600 mb-6">Discover and join clubs that match your interests</p>
-        
-        <input
-          type="text"
-          placeholder="Search clubs..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full max-w-md px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-        />
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-purple-900/20 to-gray-900">
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 py-20">
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="relative max-w-7xl mx-auto px-4 text-center">
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
+            University Clubs
+          </h1>
+          <p className="text-xl text-white/90 mb-8">Discover and join clubs that match your interests</p>
+          
+          <div className="max-w-2xl mx-auto">
+            <input
+              type="text"
+              placeholder="Search clubs..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-6 py-4 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-white/50 shadow-2xl"
+            />
+          </div>
+        </div>
       </div>
 
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
+      {/* Content Section */}
+      <div className="max-w-7xl mx-auto px-4 py-12">
 
-      {filteredClubs.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-600 text-lg">No clubs found</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredClubs.map(club => (
-            <ClubCard
-              key={club.id}
-              club={club}
-              onJoin={handleJoinClub}
-              isJoined={joinedClubs.includes(club.id)}
-            />
-          ))}
-        </div>
-      )}
+        {error && (
+          <div className="bg-red-500/20 border border-red-500 text-red-200 px-6 py-4 rounded-lg mb-8 backdrop-blur-sm">
+            {error}
+          </div>
+        )}
+
+        {filteredClubs.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-white/70 text-xl">No clubs found</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredClubs.map(club => (
+              <ClubCard
+                key={club.id}
+                club={club}
+                onJoin={handleJoinClub}
+                isJoined={joinedClubs.includes(club.id)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

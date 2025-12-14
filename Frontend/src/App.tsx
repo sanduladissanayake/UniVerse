@@ -2,21 +2,19 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { Navigation } from './components/layout/Navigation';
-import { EventList } from './components/events/EventList';
-import { EventDetails } from './components/events/EventDetails';
-
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
-import { ClubList } from './components/clubs/ClubList';
-import { ClubDetails } from './components/clubs/ClubDetails';
 
 // Pages
 import { HomePage } from './pages/HomePage';
 import { Login } from './components/auth/Login';
 import { Register } from './components/auth/Register';
+import { ClubList } from './components/clubs/ClubList';
+import { ClubDetails } from './components/clubs/ClubDetails';
+import { EventList } from './components/events/EventList';
+import { EventDetails } from './components/events/EventDetails';
 import { SuperAdminPanel } from './components/admin/SuperAdminPanel';
 import { ClubAdminPanel } from './components/admin/ClubAdminPanel';
 
-//additional imports can be added here
 const App: React.FC = () => {
   return (
     <AuthProvider>
@@ -25,23 +23,18 @@ const App: React.FC = () => {
           
           <main>
             <Routes>
-              
-              {/* Clubs Routes */}
-              <Route path="/clubs" element={<ClubList />} />
-              <Route path="/clubs/:id" element={<ClubDetails />} />
-
-              
-              
-              
               {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               
+              {/* Clubs Routes */}
+              <Route path="/clubs" element={<ClubList />} />
+              <Route path="/clubs/:id" element={<ClubDetails />} />
+              
               {/* Events Routes */}
               <Route path="/events" element={<EventList />} />
               <Route path="/events/:id" element={<EventDetails />} />
-            
               
               {/* Protected Admin Routes */}
               <Route 

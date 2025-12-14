@@ -17,6 +17,38 @@ export enum UserRole {
   FACULTY = 'FACULTY'
 }
 
+export interface Club {
+  id: string;
+  name: string;
+  description: string;
+  category: ClubCategory;
+  logoUrl?: string;
+  coverImageUrl?: string;
+  memberCount: number;
+  isActive: boolean;
+  establishedDate: Date;
+  contactEmail: string;
+  website?: string;
+  socialLinks?: SocialLinks;
+  admins: User[];
+  members: User[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export enum ClubCategory {
+  ACADEMIC = 'ACADEMIC',
+  CULTURAL = 'CULTURAL',
+  SPORTS = 'SPORTS',
+  TECHNICAL = 'TECHNICAL',
+  SOCIAL = 'SOCIAL',
+  ENVIRONMENTAL = 'ENVIRONMENTAL',
+  VOLUNTEER = 'VOLUNTEER',
+  ARTS = 'ARTS',
+  MUSIC = 'MUSIC',
+  BUSINESS = 'BUSINESS'
+}
+
 export interface Event {
   id: string;
   title: string;
@@ -33,7 +65,7 @@ export interface Event {
   requiresRegistration: boolean;
   eventType: EventType;
   imageUrl?: string;
-  //club: Club;
+  club: Club;
   organizer: User;
   attendees: User[];
   createdAt: Date;
@@ -60,7 +92,7 @@ export interface Announcement {
   priority: AnnouncementPriority;
   isActive: boolean;
   targetAudience: string[];
-  // club?: Club;
+  club?: Club;
   author: User;
   expiryDate?: Date;
   createdAt: Date;
@@ -104,6 +136,7 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
+// Form types
 export interface CreateEventForm {
   title: string;
   description: string;
@@ -118,6 +151,15 @@ export interface CreateEventForm {
   requiresRegistration: boolean;
   eventType: EventType;
   imageUrl?: string;
+}
+
+export interface CreateClubForm {
+  name: string;
+  description: string;
+  category: ClubCategory;
+  contactEmail: string;
+  website?: string;
+  socialLinks?: SocialLinks;
 }
 
 export interface CreateAnnouncementForm {

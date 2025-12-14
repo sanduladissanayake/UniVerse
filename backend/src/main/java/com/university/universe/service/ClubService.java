@@ -1,4 +1,3 @@
-
 package com.university.universe.service;
 
 import com.university.universe.model.Club;
@@ -10,20 +9,20 @@ import java.util.Optional;
 
 @Service
 public class ClubService {
-
+    
     @Autowired
     private ClubRepository clubRepository;
-
+    
     // Create a new club
     public Club createClub(Club club) {
         return clubRepository.save(club);
     }
-
+    
     // Get all clubs
     public List<Club> getAllClubs() {
         return clubRepository.findAll();
     }
-
+    
     // Get club by ID
     public Club getClubById(Long id) {
         Optional<Club> club = clubRepository.findById(id);
@@ -32,29 +31,29 @@ public class ClubService {
         }
         return club.get();
     }
-
+    
     // Get clubs by admin ID
     public List<Club> getClubsByAdminId(Long adminId) {
         return clubRepository.findByAdminId(adminId);
     }
-
+    
     // Search clubs by name
     public List<Club> searchClubsByName(String name) {
         return clubRepository.findByNameContainingIgnoreCase(name);
     }
-
+    
     // Update club
     public Club updateClub(Long id, Club updatedClub) {
         Club existingClub = getClubById(id);
-
+        
         existingClub.setName(updatedClub.getName());
         existingClub.setDescription(updatedClub.getDescription());
         existingClub.setLogoUrl(updatedClub.getLogoUrl());
         existingClub.setAdminId(updatedClub.getAdminId());
-
+        
         return clubRepository.save(existingClub);
     }
-
+    
     // Delete club
     public void deleteClub(Long id) {
         clubRepository.deleteById(id);
