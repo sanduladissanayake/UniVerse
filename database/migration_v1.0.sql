@@ -81,6 +81,15 @@ INSERT INTO users (email, password, first_name, last_name, role)
 VALUES ('admin@university.edu', '$2a$10$e0MYzXyjpJS7Pd0RVvHwHe1p2uyLQCxSPPQH3HFqNcPWoqTp/xCgO', 'Super', 'Admin', 'SUPER_ADMIN')
 ON DUPLICATE KEY UPDATE email=email;
 
+-- Insert sample clubs
+INSERT INTO clubs (name, description, admin_id) VALUES
+('Computer Science Club', 'A club for students interested in programming, software development, and technology.', NULL),
+('Photography Club', 'Capture moments and learn the art of photography with fellow enthusiasts.', NULL),
+('Music Society', 'For music lovers to share, perform, and appreciate different genres of music.', NULL),
+('Debate Society', 'Sharpen your argumentative and public speaking skills through structured debates.', NULL),
+('Sports Club', 'Stay active and healthy while competing in various sports activities.', NULL)
+ON DUPLICATE KEY UPDATE name=name;
+
 -- ======================
 -- Step 4: Verification Queries
 -- ======================

@@ -4,6 +4,8 @@ import { AuthProvider } from './context/AuthContext';
 import { Navigation } from './components/layout/Navigation';
 
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { ClubList } from './components/clubs/ClubList';
+import { ClubDetails } from './components/clubs/ClubDetails';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -21,6 +23,11 @@ const App: React.FC = () => {
           
           <main>
             <Routes>
+              
+              {/* Clubs Routes */}
+              <Route path="/clubs" element={<ClubList />} />
+              <Route path="/clubs/:id" element={<ClubDetails />} />
+
               
               
               
