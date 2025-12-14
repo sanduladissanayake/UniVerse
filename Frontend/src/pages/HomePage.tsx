@@ -87,7 +87,7 @@ export function HomePage() {
                 Upcoming Events
               </h2>
               <p className="text-white/60 text-lg">
-                Discover what's happening in the UniVerse community
+                Explore the latest activities in the UniVerse community
               </p>
             </div>
             
