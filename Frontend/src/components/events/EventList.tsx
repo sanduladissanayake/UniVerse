@@ -9,7 +9,8 @@ interface Event {
   description: string;
   eventDate: string;
   location: string;
-  club: {
+  clubId?: number;
+  club?: {
     id: number;
     name: string;
     logoUrl?: string;
@@ -36,29 +37,25 @@ export const EventList: React.FC = () => {
     try {
       setLoading(true);
       const response = await eventAPI.getAllEvents();
-      console.log('Events API Response:', response);
-      console.log('Response type:', typeof response);
-      console.log('Is Array?', Array.isArray(response));
       
-      // Handle different response formats
+      // Handle different response formats from API
+      let eventsList = [];
       if (Array.isArray(response)) {
-        console.log('Setting events from array:', response.length);
-        setEvents(response);
+        eventsList = response;
+      } else if (response && response.success && Array.isArray(response.events)) {
+        eventsList = response.events;
       } else if (response && Array.isArray(response.events)) {
-        console.log('Setting events from response.events:', response.events.length);
-        setEvents(response.events);
-      } else if (response && response.success && Array.isArray(response.data)) {
-        console.log('Setting events from response.data:', response.data.length);
-        setEvents(response.data);
-      } else {
-        console.log('Unknown response format, setting empty array');
-        console.log('Response keys:', response ? Object.keys(response) : 'null');
-        setEvents([]);
-        setError('Events loaded but in unexpected format. Check console.');
+        eventsList = response.events;
+      } else if (response && Array.isArray(response.data)) {
+        eventsList = response.data;
       }
+      
+      setEvents(eventsList);
+      setError('');
     } catch (err: any) {
       setError('Failed to load events: ' + (err.message || 'Unknown error'));
       console.error('Events fetch error:', err);
+      setEvents([]);
     } finally {
       setLoading(false);
     }
@@ -69,11 +66,13 @@ export const EventList: React.FC = () => {
 
     // Filter by search term
     if (searchTerm) {
-      filtered = filtered.filter(event =>
-        event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        event.club.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      const searchLower = searchTerm.toLowerCase();
+      filtered = filtered.filter(event => {
+        const titleMatch = event.title.toLowerCase().includes(searchLower);
+        const descMatch = event.description.toLowerCase().includes(searchLower);
+        const clubMatch = event.club?.name?.toLowerCase().includes(searchLower) || false;
+        return titleMatch || descMatch || clubMatch;
+      });
     }
 
     // Filter by time
@@ -103,15 +102,14 @@ export const EventList: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-blue-900/20 to-gray-900">
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 py-20">
-        <div className="absolute inset-0 bg-black/30" />
+      <div className="relative bg-gradient-to-r from-teal-600 to-teal-500 py-20">
         <div className="relative max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
-            University Events
+          <h1 className="text-5xl md:text-6xl font-black text-white mb-4">
+            University <span className="text-yellow-300">Events</span>
           </h1>
-          <p className="text-xl text-white/90 mb-8">Discover and join upcoming events organized by clubs</p>
+          <p className="text-xl text-teal-50 mb-8">Discover and join upcoming events organized by clubs</p>
           
           <div className="max-w-2xl mx-auto">
             <div className="relative">
@@ -121,7 +119,7 @@ export const EventList: React.FC = () => {
                 placeholder="Search events..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-14 pr-6 py-4 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-white/50 shadow-2xl"
+                className="w-full pl-14 pr-6 py-4 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:border-2 focus:border-teal-600 shadow-lg font-semibold"
               />
             </div>
           </div>
@@ -135,20 +133,20 @@ export const EventList: React.FC = () => {
 
           <button
             onClick={() => setFilterType('all')}
-            className={`px-6 py-3 rounded-full font-medium transition-all ${
+            className={`px-6 py-3 rounded-full font-bold transition-all ${
               filterType === 'all'
-                ? 'bg-white text-gray-900 shadow-lg'
-                : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm'
+                ? 'bg-teal-600 text-white shadow-lg'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
             All Events
           </button>
           <button
             onClick={() => setFilterType('upcoming')}
-            className={`px-6 py-3 rounded-full font-medium transition-all flex items-center ${
+            className={`px-6 py-3 rounded-full font-bold transition-all flex items-center ${
               filterType === 'upcoming'
-                ? 'bg-white text-gray-900 shadow-lg'
-                : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm'
+                ? 'bg-teal-600 text-white shadow-lg'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
             <Calendar className="w-4 h-4 mr-2" />
@@ -156,10 +154,10 @@ export const EventList: React.FC = () => {
           </button>
           <button
             onClick={() => setFilterType('past')}
-            className={`px-6 py-3 rounded-full font-medium transition-all ${
+            className={`px-6 py-3 rounded-full font-bold transition-all ${
               filterType === 'past'
-                ? 'bg-white text-gray-900 shadow-lg'
-                : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm'
+                ? 'bg-teal-600 text-white shadow-lg'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
             Past
@@ -167,7 +165,7 @@ export const EventList: React.FC = () => {
         </div>
 
         {error && (
-          <div className="bg-red-500/20 border border-red-500 text-red-200 px-6 py-4 rounded-lg mb-8 backdrop-blur-sm">
+          <div className="bg-red-50 border-2 border-red-200 text-red-700 px-6 py-4 rounded-lg mb-8 font-semibold">
             {error}
           </div>
         )}
@@ -175,9 +173,9 @@ export const EventList: React.FC = () => {
         {/* Events Grid */}
         {filteredEvents.length === 0 ? (
           <div className="text-center py-20">
-            <Filter className="w-16 h-16 text-white/40 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-white mb-2">No events found</h3>
-            <p className="text-white/60">
+            <Filter className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-900 mb-2">No events found</h3>
+            <p className="text-gray-600">
               {searchTerm
                 ? 'Try adjusting your search terms'
                 : 'No events are available at the moment'}
@@ -192,7 +190,7 @@ export const EventList: React.FC = () => {
         )}
 
         {/* Event count */}
-        <div className="mt-12 text-center text-white/60 text-lg">
+        <div className="mt-12 text-center text-gray-600 text-lg font-semibold">
           Showing {filteredEvents.length} of {events.length} events
         </div>
       </div>
