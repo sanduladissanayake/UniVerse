@@ -17,8 +17,21 @@ export const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      await login(email, password);
-      navigate('/'); // Redirect to home after login
+      const loggedInUser = await login(email, password);
+      
+      // Validate user object exists and has role property
+      if (!loggedInUser || !loggedInUser.role) {
+        throw new Error('Invalid user data received from login');
+      }
+      
+      // Redirect based on user role
+      if (loggedInUser.role === 'SUPER_ADMIN') {
+        navigate('/admin/super');
+      } else if (loggedInUser.role === 'CLUB_ADMIN') {
+        navigate('/admin/club');
+      } else {
+        navigate('/');
+      }
     } catch (err: any) {
       setError(err.message || 'Login failed. Please check your credentials.');
     } finally {
@@ -27,42 +40,42 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Login to UniVerse
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 to-cyan-50">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md border-2 border-teal-200">
+        <h2 className="text-3xl font-bold text-center text-gray-900 mb-6">
+          Login to <span className="text-teal-600">UniVerse</span>
         </h2>
         
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded mb-4 font-semibold">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-gray-700 font-medium mb-2">
+            <label className="block text-gray-700 font-bold mb-2">
               Email
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-teal-500 focus:bg-white text-gray-900"
               placeholder="Enter your email"
               required
             />
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium mb-2">
+            <label className="block text-gray-700 font-bold mb-2">
               Password
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-teal-500 focus:bg-white text-gray-900"
               placeholder="Enter your password"
               required
             />
@@ -71,7 +84,7 @@ export const Login: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            className="w-full bg-yellow-400 text-teal-900 py-3 rounded-lg font-bold hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
@@ -79,7 +92,7 @@ export const Login: React.FC = () => {
 
         <p className="text-center text-gray-600 mt-4">
           Don't have an account?{' '}
-          <a href="/register" className="text-purple-600 hover:text-purple-700 font-semibold">
+          <a href="/register" className="text-teal-600 hover:text-teal-700 font-bold">
             Register here
           </a>
         </p>
