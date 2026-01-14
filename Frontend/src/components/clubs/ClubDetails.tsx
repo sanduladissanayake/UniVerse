@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { clubAPI, eventAPI, membershipAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { MembershipForm } from './MembershipForm';
 
 interface Club {
   id: number;
@@ -9,6 +10,7 @@ interface Club {
   description: string;
   logoUrl?: string;
   adminId: number;
+  membershipFee?: number;
 }
 
 interface Event {
@@ -22,20 +24,37 @@ interface Event {
 export const ClubDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   
   const [club, setClub] = useState<Club | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [isJoined, setIsJoined] = useState(false);
+  const [showMembershipForm, setShowMembershipForm] = useState(false);
+  const [paymentAlreadyCompleted, setPaymentAlreadyCompleted] = useState(false);
 
   useEffect(() => {
     if (id) {
       fetchClubDetails();
       fetchClubEvents();
       checkMembership();
+      
+      // Check if coming from payment success
+      const openForm = searchParams.get('openMembershipForm');
+      if (openForm === 'true') {
+        console.log('✅ Auto-opening membership form after payment');
+        setShowMembershipForm(true);
+        setPaymentAlreadyCompleted(true);
+        
+        // Check sessionStorage for payment info
+        const paymentInfo = sessionStorage.getItem('paymentCompleted');
+        if (paymentInfo) {
+          console.log('✅ Payment info found:', paymentInfo);
+        }
+      }
     }
-  }, [id, user]);
+  }, [id, user, searchParams]);
 
   const fetchClubDetails = async () => {
     try {
@@ -74,21 +93,14 @@ export const ClubDetails: React.FC = () => {
     }
   };
 
-  const handleJoin = async () => {
+  const handleJoin = () => {
     if (!user) {
       navigate('/login');
       return;
     }
 
-    try {
-      const response = await membershipAPI.joinClub(user.id, Number(id));
-      if (response.success) {
-        setIsJoined(true);
-        alert('Successfully joined the club!');
-      }
-    } catch (err) {
-      alert('Failed to join club');
-    }
+    // Open the membership form (including payment if needed)
+    setShowMembershipForm(true);
   };
 
   const handleLeave = async () => {
@@ -96,13 +108,25 @@ export const ClubDetails: React.FC = () => {
 
     if (confirm('Are you sure you want to leave this club?')) {
       try {
+        console.log('🚀 Attempting to leave club:', id);
         const response = await membershipAPI.leaveClub(user.id, Number(id));
+        
         if (response.success) {
+          console.log('✅ Leave request successful, refreshing membership status...');
+          // Update UI
           setIsJoined(false);
           alert('You have left the club');
+          
+          // Refresh membership status to confirm
+          console.log('🔄 Refreshing membership status...');
+          await checkMembership();
+        } else {
+          console.error('❌ Leave request failed:', response.message);
+          alert(`Failed to leave club: ${response.message}`);
         }
-      } catch (err) {
-        alert('Failed to leave club');
+      } catch (err: any) {
+        console.error('❌ Error leaving club:', err.message);
+        alert(`Failed to leave club: ${err.message || 'Unknown error'}`);
       }
     }
   };
@@ -165,7 +189,7 @@ export const ClubDetails: React.FC = () => {
               ) : (
                 <button
                   onClick={handleJoin}
-                  className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition"
+                  className="px-6 py-3 bg-yellow-400 text-black hover:bg-yellow-300 rounded-lg transition"
                 >
                   Join Club
                 </button>
@@ -200,6 +224,27 @@ export const ClubDetails: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Membership Form Modal */}
+      {club && (
+        <MembershipForm
+          isOpen={showMembershipForm}
+          onClose={() => {
+            setShowMembershipForm(false);
+            setPaymentAlreadyCompleted(false);
+            checkMembership();
+          }}
+          clubId={club.id}
+          clubName={club.name}
+          membershipFee={club.membershipFee ? Number(club.membershipFee) : 0}
+          onSuccess={() => {
+            setIsJoined(true);
+            setShowMembershipForm(false);
+            setPaymentAlreadyCompleted(false);
+          }}
+          paymentAlreadyCompleted={paymentAlreadyCompleted}
+        />
+      )}
     </div>
   );
 };
