@@ -50,6 +50,7 @@ public class EventService {
         existingEvent.setDescription(updatedEvent.getDescription());
         existingEvent.setEventDate(updatedEvent.getEventDate());
         existingEvent.setLocation(updatedEvent.getLocation());
+        existingEvent.setPhotoUrl(updatedEvent.getPhotoUrl());
         
         return eventRepository.save(existingEvent);
     }

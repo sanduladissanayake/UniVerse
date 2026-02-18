@@ -6,6 +6,37 @@ const getToken = () => {
   return localStorage.getItem('token');
 };
 
+// Helper function to safely parse JSON responses
+const parseResponse = async (response: Response) => {
+  // Check if response is ok first
+  if (!response.ok) {
+    try {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+    } catch (e) {
+      // If response is not JSON, throw with status text
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+  }
+  
+  // Check if there's content to parse
+  const contentType = response.headers.get('content-type');
+  if (!contentType || !contentType.includes('application/json')) {
+    return { success: true, data: null };
+  }
+  
+  const text = await response.text();
+  if (!text) {
+    return { success: true, data: null };
+  }
+  
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    throw new Error('Invalid JSON response from server');
+  }
+};
+
 // =========================
 // AUTHENTICATION API
 // =========================
@@ -19,7 +50,7 @@ export const authAPI = {
       },
       body: JSON.stringify(userData),
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Login user
@@ -31,7 +62,7 @@ export const authAPI = {
       },
       body: JSON.stringify({ email, password }),
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Get current user
@@ -43,7 +74,7 @@ export const authAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 };
 
@@ -54,19 +85,19 @@ export const clubAPI = {
   // Get all clubs
   getAllClubs: async () => {
     const response = await fetch(`${API_BASE_URL}/clubs`);
-    return response.json();
+    return parseResponse(response);
   },
 
   // Get club by ID
   getClubById: async (id: number) => {
     const response = await fetch(`${API_BASE_URL}/clubs/${id}`);
-    return response.json();
+    return parseResponse(response);
   },
 
   // Get club events
   getClubEvents: async (clubId: number) => {
     const response = await fetch(`${API_BASE_URL}/clubs/${clubId}/events`);
-    return response.json();
+    return parseResponse(response);
   },
 
   // Get club members
@@ -77,7 +108,7 @@ export const clubAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Create a club (Admin only)
@@ -91,7 +122,7 @@ export const clubAPI = {
       },
       body: JSON.stringify(clubData),
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Update club (Admin only)
@@ -105,7 +136,7 @@ export const clubAPI = {
       },
       body: JSON.stringify(clubData),
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Delete club (Admin only)
@@ -117,7 +148,7 @@ export const clubAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 };
 
@@ -128,19 +159,19 @@ export const eventAPI = {
   // Get all events
   getAllEvents: async () => {
     const response = await fetch(`${API_BASE_URL}/events`);
-    return response.json();
+    return parseResponse(response);
   },
 
   // Get event by ID
   getEventById: async (id: number) => {
     const response = await fetch(`${API_BASE_URL}/events/${id}`);
-    return response.json();
+    return parseResponse(response);
   },
 
   // Get events by club
   getEventsByClub: async (clubId: number) => {
     const response = await fetch(`${API_BASE_URL}/events/club/${clubId}`);
-    return response.json();
+    return parseResponse(response);
   },
 
   // Create event (Club Admin only)
@@ -154,7 +185,7 @@ export const eventAPI = {
       },
       body: JSON.stringify(eventData),
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Update event (Club Admin only)
@@ -168,7 +199,7 @@ export const eventAPI = {
       },
       body: JSON.stringify(eventData),
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Delete event (Club Admin only)
@@ -180,7 +211,7 @@ export const eventAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 };
 
@@ -199,7 +230,35 @@ export const membershipAPI = {
       },
       body: JSON.stringify({ userId, clubId }),
     });
-    return response.json();
+    return parseResponse(response);
+  },
+
+  // Join a club with membership form details (after payment)
+  joinClubAfterPaymentWithDetails: async (formData: any) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/memberships/join-after-payment-with-details`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(formData),
+    });
+    return parseResponse(response);
+  },
+
+  // Join a club with membership form details (free club)
+  joinClubWithDetails: async (formData: any) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/memberships/join-with-details`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(formData),
+    });
+    return parseResponse(response);
   },
 
   // Leave a club
@@ -211,7 +270,7 @@ export const membershipAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Get user memberships
@@ -222,7 +281,7 @@ export const membershipAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Get club members
@@ -233,7 +292,7 @@ export const membershipAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 };
 
@@ -249,7 +308,7 @@ export const adminAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Get all clubs (Admin)
@@ -260,7 +319,7 @@ export const adminAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Get club admins (Super Admin only)
@@ -271,7 +330,7 @@ export const adminAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Create club admin (Super Admin only)
@@ -285,7 +344,7 @@ export const adminAPI = {
       },
       body: JSON.stringify(userData),
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Update user (Super Admin only)
@@ -299,7 +358,7 @@ export const adminAPI = {
       },
       body: JSON.stringify(userData),
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Delete user (Super Admin only)
@@ -311,6 +370,6 @@ export const adminAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 };

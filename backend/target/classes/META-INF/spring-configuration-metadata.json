@@ -1,0 +1,62 @@
+{
+  "groups": [
+    {
+      "name": "jwt",
+      "type": "com.university.universe.config.JwtProperties",
+      "sourceType": "com.university.universe.config.JwtProperties"
+    },
+    {
+      "name": "cors",
+      "type": "com.university.universe.config.CorsProperties",
+      "sourceType": "com.university.universe.config.CorsProperties"
+    },
+    {
+      "name": "stripe",
+      "type": "com.university.universe.config.StripeProperties",
+      "sourceType": "com.university.universe.config.StripeProperties"
+    },
+    {
+      "name": "app",
+      "type": "com.university.universe.config.ApplicationProperties",
+      "sourceType": "com.university.universe.config.ApplicationProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "JWT secret key for token generation and validation",
+      "sourceType": "com.university.universe.config.JwtProperties"
+    },
+    {
+      "name": "jwt.expiration",
+      "type": "java.lang.Long",
+      "description": "JWT token expiration time in milliseconds",
+      "sourceType": "com.university.universe.config.JwtProperties"
+    },
+    {
+      "name": "cors.allowed.origins",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of allowed CORS origins",
+      "sourceType": "com.university.universe.config.CorsProperties"
+    },
+    {
+      "name": "stripe.api.key",
+      "type": "java.lang.String",
+      "description": "Stripe API secret key from environment or properties",
+      "sourceType": "com.university.universe.config.StripeProperties"
+    },
+    {
+      "name": "stripe.webhook.secret",
+      "type": "java.lang.String",
+      "description": "Stripe webhook signing secret",
+      "sourceType": "com.university.universe.config.StripeProperties"
+    },
+    {
+      "name": "app.frontend.url",
+      "type": "java.lang.String",
+      "description": "Frontend application URL",
+      "sourceType": "com.university.universe.config.ApplicationProperties"
+    }
+  ]
+}

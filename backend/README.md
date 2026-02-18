@@ -25,20 +25,37 @@ spring.datasource.username=root
 spring.datasource.password=YOUR_MYSQL_PASSWORD
 ```
 
-#### Step 3: Build and Run
+#### Step 3: Configure Stripe Credentials
+⚠️ **IMPORTANT: Required for Payment Functionality**
+
+```bash
+# Set environment variables
+$env:STRIPE_API_KEY = "sk_test_your_key_from_stripe_dashboard"
+$env:STRIPE_WEBHOOK_SECRET = "whsec_your_signing_secret"
+```
+
+For detailed setup instructions, see [STRIPE_SETUP_ENV_FIX.md](./STRIPE_SETUP_ENV_FIX.md)
+
+#### Step 4: Build and Run
 ```bash
 # Navigate to backend folder
 cd backend
 
-# Run using Maven
+# Option 1: Use PowerShell startup script (Recommended)
+.\run-backend.ps1
+
+# Option 2: Use Maven directly (with env vars set)
 mvn spring-boot:run
 
-# OR use Maven wrapper (no Maven installation needed)
+# Option 3: Use Maven wrapper (no Maven installation needed)
 ./mvnw spring-boot:run     # Linux/Mac
 mvnw.cmd spring-boot:run   # Windows
+
+# Option 4: Run compiled JAR (must build first: mvn package)
+java -jar target/universe-backend-1.0.0.jar
 ```
 
-The backend will start on **http://localhost:8080**
+The backend will start on **http://localhost:8081**
 
 ### Testing the API
 
@@ -74,6 +91,11 @@ curl http://localhost:8080/api/clubs/1
 
 ### Common Issues
 
+**Problem: "Stripe API key is not properly configured"**
+- Cause: Environment variables not set
+- Solution: Set `STRIPE_API_KEY` and `STRIPE_WEBHOOK_SECRET` environment variables
+- See [STRIPE_SETUP_ENV_FIX.md](./STRIPE_SETUP_ENV_FIX.md) for detailed instructions
+
 **Problem: "Communications link failure"**
 - Solution: Make sure MySQL is running
 
@@ -82,6 +104,10 @@ curl http://localhost:8080/api/clubs/1
 
 **Problem: "Table doesn't exist"**
 - Solution: Run schema.sql in MySQL
+
+**Problem: "HTTP 400 error in payment flow"**
+- Cause: Usually Stripe configuration issue
+- Solution: See [STRIPE_SETUP_ENV_FIX.md](./STRIPE_SETUP_ENV_FIX.md)
 
 ### Project Structure
 ```

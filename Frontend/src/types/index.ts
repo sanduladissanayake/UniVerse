@@ -86,17 +86,21 @@ export enum EventType {
 }
 
 export interface Announcement {
-  id: string;
+  id: number | string;
   title: string;
   content: string;
-  priority: AnnouncementPriority;
-  isActive: boolean;
-  targetAudience: string[];
+  clubId: number;
+  createdBy: number;
+  isPublished: boolean;
+  publishedAt?: string | Date;
+  priority?: AnnouncementPriority;
+  isActive?: boolean;
+  targetAudience?: string[];
   club?: Club;
-  author: User;
+  author?: User;
   expiryDate?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string | Date;
+  updatedAt: string | Date;
 }
 
 export enum AnnouncementPriority {

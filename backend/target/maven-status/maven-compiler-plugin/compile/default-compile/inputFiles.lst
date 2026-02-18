@@ -1,20 +1,40 @@
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\model\User.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\service\ClubService.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\config\SecurityConfig.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\controller\ClubController.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\model\ClubMembership.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\repository\ClubMembershipRepository.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\service\EventService.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\repository\EventRepository.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\UniverseApplication.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\service\JwtService.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\model\Club.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\controller\AdminController.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\controller\AuthController.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\model\Event.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\controller\EventController.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\service\ClubMembershipService.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\controller\ClubMembershipController.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\repository\UserRepository.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\service\UserService.java
-E:\Desktop\New folder\UniVerse\UniVerse\backend\src\main\java\com\university\universe\repository\ClubRepository.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\model\Event.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\service\ClubService.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\config\JwtAuthenticationFilter.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\service\ClubMembershipService.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\config\StripeProperties.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\repository\EventRepository.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\service\PaymentService.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\dto\CheckoutSessionRequest.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\controller\PaymentController.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\service\UserService.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\controller\EventController.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\controller\FileUploadController.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\repository\ClubRepository.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\service\JwtService.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\controller\AuthController.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\config\CorsProperties.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\config\JwtProperties.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\repository\PaymentRepository.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\controller\AnnouncementController.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\controller\SetupController.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\repository\ClubMembershipRepository.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\model\User.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\config\ApplicationProperties.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\config\PasswordHashGenerator.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\model\Club.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\dto\CheckoutSessionResponse.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\dto\MembershipFormRequest.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\model\Announcement.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\controller\AdminController.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\model\Payment.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\repository\UserRepository.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\service\AnnouncementService.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\controller\ClubMembershipController.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\service\EventService.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\config\SecurityConfig.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\model\ClubMembership.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\controller\ClubController.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\controller\ChatbotController.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\repository\AnnouncementRepository.java
+C:\Kel\Final final (3)\Final final\Final\UniVerse\backend\src\main\java\com\university\universe\UniverseApplication.java

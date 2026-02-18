@@ -55,14 +55,14 @@ export function EventsPage() {
   });
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
+    <div className="min-h-screen bg-white pt-24 pb-16">
       <div className="container mx-auto px-6">
         {/* Header */}
         <div className="text-center space-y-4 mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white">
-            Upcoming Events
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
+            Upcoming <span className="text-teal-600">Events</span>
           </h1>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
             Discover exciting events happening across our university community
           </p>
         </div>
@@ -70,25 +70,25 @@ export function EventsPage() {
         {/* Search and Filter */}
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
               placeholder="Search events..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+              className="w-full pl-10 pr-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-teal-500 focus:bg-white"
             />
           </div>
           
           <div className="relative">
-            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 w-4 h-4" />
+            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="pl-10 pr-8 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white focus:outline-none focus:border-purple-500 appearance-none min-w-[200px]"
+              className="pl-10 pr-8 py-3 bg-gray-50 border-2 border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-teal-500 focus:bg-white appearance-none min-w-[200px]"
             >
               {categories.map(category => (
-                <option key={category} value={category === 'All' ? '' : category} className="bg-gray-800">
+                <option key={category} value={category === 'All' ? '' : category} className="bg-white">
                   {category}
                 </option>
               ))}
@@ -113,7 +113,7 @@ export function EventsPage() {
         </div>
 
         {filteredEvents.length === 0 && (
-          <div className="text-center text-white/60 mt-16">
+          <div className="text-center text-gray-600 mt-16">
             <p className="text-xl">No events found matching your criteria.</p>
           </div>
         )}

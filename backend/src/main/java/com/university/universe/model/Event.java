@@ -2,6 +2,7 @@ package com.university.universe.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "events")
@@ -22,8 +23,15 @@ public class Event {
     
     private String location;
     
+    @Column(name = "photo_url")
+    private String photoUrl;
+    
     @Column(name = "club_id")
     private Long clubId;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "club_id", insertable = false, updatable = false)
+    private Club club;
     
     @Column(name = "created_by")
     private Long createdBy;
@@ -93,12 +101,28 @@ public class Event {
         this.location = location;
     }
     
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+    
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+    
     public Long getClubId() {
         return clubId;
     }
     
     public void setClubId(Long clubId) {
         this.clubId = clubId;
+    }
+    
+    public Club getClub() {
+        return club;
+    }
+    
+    public void setClub(Club club) {
+        this.club = club;
     }
     
     public Long getCreatedBy() {

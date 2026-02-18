@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS clubs (
     description TEXT,
     logo_url VARCHAR(500),
     admin_id BIGINT,
+    membership_fee DECIMAL(10, 2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (admin_id) REFERENCES users(id) ON DELETE SET NULL
@@ -35,6 +36,7 @@ CREATE TABLE IF NOT EXISTS events (
     description TEXT,
     event_date DATETIME NOT NULL,
     location VARCHAR(255),
+    photo_url VARCHAR(500),
     club_id BIGINT,
     created_by BIGINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -49,13 +51,27 @@ CREATE TABLE IF NOT EXISTS club_memberships (
     user_id BIGINT NOT NULL,
     club_id BIGINT NOT NULL,
     status VARCHAR(20) DEFAULT 'ACTIVE',
+    full_name VARCHAR(255),
+    address VARCHAR(500),
+    contact_number VARCHAR(20),
+    birthday DATE,
+    faculty VARCHAR(100),
+    year VARCHAR(50),
+    skills JSON DEFAULT NULL,
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (club_id) REFERENCES clubs(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_membership (user_id, club_id)
+    UNIQUE KEY unique_membership (user_id, club_id),
+    INDEX idx_full_name (full_name),
+    INDEX idx_contact_number (contact_number),
+    INDEX idx_faculty (faculty)
 );
 
--- Insert default super admin
+-- Insert default super admins
 INSERT INTO users (email, password, first_name, last_name, role) 
-VALUES ('admin@university.edu', '$2a$10$XYZ...', 'Super', 'Admin', 'SUPER_ADMIN')
+VALUES ('admin@university.edu', '$2a$10$e0MYzXyjpJS7Pd0RVvHwHe1p2uyLQCxSPPQH3HFqNcPWoqTp/xCgO', 'Super', 'Admin', 'SUPER_ADMIN')
+ON DUPLICATE KEY UPDATE password='$2a$10$e0MYzXyjpJS7Pd0RVvHwHe1p2uyLQCxSPPQH3HFqNcPWoqTp/xCgO';
+
+INSERT INTO users (email, password, first_name, last_name, role) 
+VALUES ('superadmin@university.edu', '$2a$10$e0MYzXyjpJS7Pd0RVvHwHe1p2uyLQCxSPPQH3HFqNcPWoqTp/xCgO', 'Super', 'Admin2', 'SUPER_ADMIN')
 ON DUPLICATE KEY UPDATE email=email;

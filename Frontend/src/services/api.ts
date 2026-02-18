@@ -6,6 +6,37 @@ const getToken = () => {
   return localStorage.getItem('token');
 };
 
+// Helper function to safely parse JSON responses
+const parseResponse = async (response: Response) => {
+  // Check if response is ok first
+  if (!response.ok) {
+    try {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+    } catch (e) {
+      // If response is not JSON, throw with status text
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+  }
+  
+  // Check if there's content to parse
+  const contentType = response.headers.get('content-type');
+  if (!contentType || !contentType.includes('application/json')) {
+    return { success: true, data: null };
+  }
+  
+  const text = await response.text();
+  if (!text) {
+    return { success: true, data: null };
+  }
+  
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    throw new Error('Invalid JSON response from server');
+  }
+};
+
 // =========================
 // AUTHENTICATION API
 // =========================
@@ -19,7 +50,7 @@ export const authAPI = {
       },
       body: JSON.stringify(userData),
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Login user
@@ -31,7 +62,7 @@ export const authAPI = {
       },
       body: JSON.stringify({ email, password }),
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Get current user
@@ -43,7 +74,7 @@ export const authAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 };
 
@@ -54,19 +85,32 @@ export const clubAPI = {
   // Get all clubs
   getAllClubs: async () => {
     const response = await fetch(`${API_BASE_URL}/clubs`);
-    return response.json();
+    const data = await parseResponse(response);
+    // Return full response with success field
+    if (data.success !== undefined) {
+      return data; // Already has success field
+    }
+    return { success: true, clubs: data.clubs || data };
   },
 
   // Get club by ID
   getClubById: async (id: number) => {
     const response = await fetch(`${API_BASE_URL}/clubs/${id}`);
-    return response.json();
+    const data = await parseResponse(response);
+    if (data.success !== undefined) {
+      return data;
+    }
+    return { success: true, club: data.club || data };
   },
 
   // Get club events
   getClubEvents: async (clubId: number) => {
-    const response = await fetch(`${API_BASE_URL}/clubs/${clubId}/events`);
-    return response.json();
+    const response = await fetch(`${API_BASE_URL}/events/club/${clubId}`);
+    const data = await parseResponse(response);
+    if (data.success !== undefined) {
+      return data;
+    }
+    return { success: true, events: data.events || data };
   },
 
   // Get club members
@@ -77,7 +121,26 @@ export const clubAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    const data = await parseResponse(response);
+    if (data.success !== undefined) {
+      return data;
+    }
+    return { success: true, memberships: data.data || data || [] };
+  },
+
+  // Get clubs by admin ID
+  getClubsByAdmin: async (adminId: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/clubs/admin/${adminId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    const data = await parseResponse(response);
+    if (data.success !== undefined) {
+      return data;
+    }
+    return { success: true, clubs: data.clubs || data };
   },
 
   // Create a club (Admin only)
@@ -91,7 +154,11 @@ export const clubAPI = {
       },
       body: JSON.stringify(clubData),
     });
-    return response.json();
+    const data = await parseResponse(response);
+    if (data.success !== undefined) {
+      return data;
+    }
+    return { success: true, club: data.club || data };
   },
 
   // Update club (Admin only)
@@ -105,7 +172,11 @@ export const clubAPI = {
       },
       body: JSON.stringify(clubData),
     });
-    return response.json();
+    const data = await parseResponse(response);
+    if (data.success !== undefined) {
+      return data;
+    }
+    return { success: true, club: data.club || data };
   },
 
   // Delete club (Admin only)
@@ -117,7 +188,7 @@ export const clubAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 };
 
@@ -128,19 +199,31 @@ export const eventAPI = {
   // Get all events
   getAllEvents: async () => {
     const response = await fetch(`${API_BASE_URL}/events`);
-    return response.json();
+    const data = await parseResponse(response);
+    if (data.success !== undefined) {
+      return data;
+    }
+    return { success: true, events: data.events || data };
   },
 
   // Get event by ID
   getEventById: async (id: number) => {
     const response = await fetch(`${API_BASE_URL}/events/${id}`);
-    return response.json();
+    const data = await parseResponse(response);
+    if (data.success !== undefined) {
+      return data;
+    }
+    return { success: true, event: data.event || data };
   },
 
   // Get events by club
   getEventsByClub: async (clubId: number) => {
     const response = await fetch(`${API_BASE_URL}/events/club/${clubId}`);
-    return response.json();
+    const data = await parseResponse(response);
+    if (data.success !== undefined) {
+      return data;
+    }
+    return { success: true, events: data.events || data };
   },
 
   // Create event (Club Admin only)
@@ -154,7 +237,11 @@ export const eventAPI = {
       },
       body: JSON.stringify(eventData),
     });
-    return response.json();
+    const data = await parseResponse(response);
+    if (data.success !== undefined) {
+      return data;
+    }
+    return { success: true, event: data.event || data };
   },
 
   // Update event (Club Admin only)
@@ -168,7 +255,11 @@ export const eventAPI = {
       },
       body: JSON.stringify(eventData),
     });
-    return response.json();
+    const data = await parseResponse(response);
+    if (data.success !== undefined) {
+      return data;
+    }
+    return { success: true, event: data.event || data };
   },
 
   // Delete event (Club Admin only)
@@ -180,7 +271,7 @@ export const eventAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 };
 
@@ -199,7 +290,49 @@ export const membershipAPI = {
       },
       body: JSON.stringify({ userId, clubId }),
     });
-    return response.json();
+    return parseResponse(response);
+  },
+
+  // Join a club after successful payment
+  joinClubAfterPayment: async (userId: number, clubId: number, paymentId: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/memberships/join-after-payment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ userId, clubId, paymentId }),
+    });
+    return parseResponse(response);
+  },
+
+  // Join a club with membership form details (after payment)
+  joinClubAfterPaymentWithDetails: async (formData: any) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/memberships/join-after-payment-with-details`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(formData),
+    });
+    return parseResponse(response);
+  },
+
+  // Join a club with membership form details (free club)
+  joinClubWithDetails: async (formData: any) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/memberships/join-with-details`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(formData),
+    });
+    return parseResponse(response);
   },
 
   // Leave a club
@@ -211,7 +344,7 @@ export const membershipAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Get user memberships
@@ -222,7 +355,7 @@ export const membershipAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
   },
 
   // Get club members
@@ -233,7 +366,106 @@ export const membershipAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
+  },
+};
+
+// =========================
+// PAYMENT API (Stripe Integration)
+// =========================
+// Helper function to get absolute URL for payment callbacks
+// Constructs full URLs with the current domain for Stripe
+const getAbsoluteUrl = (relativePath: string): string => {
+  const { protocol, hostname, port } = window.location;
+  const baseUrl = `${protocol}//${hostname}${port ? ':' + port : ''}`;
+  return baseUrl + relativePath;
+};
+
+export const paymentAPI = {
+  // Create a Stripe checkout session
+  createCheckoutSession: async (userId: number, clubId: number, amount: number, currency: string = 'LKR') => {
+    const token = getToken();
+    
+    // Build absolute URLs for Stripe (Stripe requires full URLs, not relative paths)
+    // Examples: http://localhost:3000/payment-success or https://example.com/payment-success
+    const successUrl = getAbsoluteUrl('/payment-success');
+    const cancelUrl = getAbsoluteUrl('/payment-cancel');
+    
+    // Validate inputs
+    if (!userId || !clubId || !amount || amount <= 0) {
+      throw new Error('Invalid payment parameters: userId, clubId, and amount (> 0) are required');
+    }
+    
+    // Build request payload as proper object
+    // Ensure amount is a decimal number with proper precision
+    const requestPayload = {
+      userId: Number(userId),
+      clubId: Number(clubId),
+      amount: Number(parseFloat(amount.toString()).toFixed(2)), // Ensure 2 decimal places
+      currency: currency,
+      successUrl: successUrl,
+      cancelUrl: cancelUrl,
+    };
+    
+    console.log('🔵 Payment API Request:', JSON.stringify(requestPayload, null, 2));
+    console.log('Amount type:', typeof requestPayload.amount, 'Value:', requestPayload.amount);
+    
+    const response = await fetch(`${API_BASE_URL}/payments/create-checkout-session`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(requestPayload),
+    });
+    return parseResponse(response);
+  },
+
+  // Get payment details
+  getPayment: async (paymentId: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/payments/${paymentId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return parseResponse(response);
+  },
+
+  // Get payment by session ID
+  getPaymentBySession: async (sessionId: string) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/payments/session/${sessionId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return parseResponse(response);
+  },
+
+  // Verify if payment is successful
+  verifyPayment: async (paymentId: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/payments/${paymentId}/verify`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return parseResponse(response);
+  },
+
+  // Confirm payment status by checking with Stripe
+  // This updates the database if payment has succeeded in Stripe
+  confirmPayment: async (paymentId: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/payments/${paymentId}/confirm`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return parseResponse(response);
   },
 };
 
@@ -249,7 +481,20 @@ export const adminAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    const data = await parseResponse(response);
+    return data.data || data.users || [];
+  },
+
+  // Get users by role
+  getUsersByRole: async (role: string) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/admin/users/role/${role}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    const data = await parseResponse(response);
+    return data.data || data.users || [];
   },
 
   // Get all clubs (Admin)
@@ -260,7 +505,8 @@ export const adminAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    const data = await parseResponse(response);
+    return data.data || data.clubs || [];
   },
 
   // Get club admins (Super Admin only)
@@ -271,7 +517,8 @@ export const adminAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    const data = await parseResponse(response);
+    return data.data || data.clubAdmins || [];
   },
 
   // Create club admin (Super Admin only)
@@ -285,7 +532,8 @@ export const adminAPI = {
       },
       body: JSON.stringify(userData),
     });
-    return response.json();
+    const data = await parseResponse(response);
+    return data.data || data.user || data;
   },
 
   // Update user (Super Admin only)
@@ -299,7 +547,8 @@ export const adminAPI = {
       },
       body: JSON.stringify(userData),
     });
-    return response.json();
+    const data = await parseResponse(response);
+    return data.data || data.user || data;
   },
 
   // Delete user (Super Admin only)
@@ -311,6 +560,185 @@ export const adminAPI = {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.json();
+    return parseResponse(response);
+  },
+};
+
+// =========================
+// FILE UPLOAD API
+// =========================
+export const fileAPI = {
+  // Upload image file
+  uploadImage: async (file: File) => {
+    const token = getToken();
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(`${API_BASE_URL}/upload/image`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    });
+    return parseResponse(response);
+  },
+
+  // Upload image with base64
+  uploadImageBase64: async (base64Data: string, fileName: string) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/upload/image/base64`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        base64: base64Data,
+        fileName: fileName,
+      }),
+    });
+    return parseResponse(response);
+  },
+};
+
+// =========================
+// ANNOUNCEMENT API
+// =========================
+export const announcementAPI = {
+  // Create a new announcement (draft)
+  createAnnouncement: async (announcementData: any) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/announcements`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(announcementData),
+    });
+    return parseResponse(response);
+  },
+
+  // Get all announcements (admin)
+  getAllAnnouncements: async () => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/announcements`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return parseResponse(response);
+  },
+
+  // Get announcement by ID
+  getAnnouncementById: async (id: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/announcements/${id}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return parseResponse(response);
+  },
+
+  // Get all announcements by club (admin view - all drafts and published)
+  getAllAnnouncementsByClub: async (clubId: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/announcements/club/${clubId}/all`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return parseResponse(response);
+  },
+
+  // Get published announcements by club (student view)
+  getPublishedAnnouncementsByClub: async (clubId: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/announcements/club/${clubId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return parseResponse(response);
+  },
+
+  // Get announcements by creator
+  getAnnouncementsByCreator: async (createdBy: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/announcements/creator/${createdBy}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return parseResponse(response);
+  },
+
+  // Get announcements by club and creator
+  getAnnouncementsByClubAndCreator: async (clubId: number, createdBy: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/announcements/club/${clubId}/creator/${createdBy}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return parseResponse(response);
+  },
+
+  // Update announcement
+  updateAnnouncement: async (id: number, announcementData: any) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/announcements/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(announcementData),
+    });
+    return parseResponse(response);
+  },
+
+  // Publish an announcement
+  publishAnnouncement: async (id: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/announcements/${id}/publish`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return parseResponse(response);
+  },
+
+  // Unpublish an announcement
+  unpublishAnnouncement: async (id: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/announcements/${id}/unpublish`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return parseResponse(response);
+  },
+
+  // Delete an announcement
+  deleteAnnouncement: async (id: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/announcements/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return parseResponse(response);
   },
 };

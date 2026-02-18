@@ -51,14 +51,14 @@ export const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Join UniVerse
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 to-cyan-50">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md border-2 border-teal-200">
+        <h2 className="text-3xl font-bold text-center text-gray-900 mb-6">
+          Join <span className="text-teal-600">UniVerse</span>
         </h2>
         
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded mb-4 font-semibold">
             {error}
           </div>
         )}
@@ -66,7 +66,7 @@ export const Register: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 font-medium mb-2">
+              <label className="block text-gray-700 font-bold mb-2">
                 First Name
               </label>
               <input
@@ -74,14 +74,14 @@ export const Register: React.FC = () => {
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-teal-500 focus:bg-white text-gray-900"
                 placeholder="John"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-gray-700 font-medium mb-2">
+              <label className="block text-gray-700 font-bold mb-2">
                 Last Name
               </label>
               <input
@@ -89,7 +89,7 @@ export const Register: React.FC = () => {
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-teal-500 focus:bg-white text-gray-900"
                 placeholder="Doe"
                 required
               />
@@ -97,7 +97,7 @@ export const Register: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium mb-2">
+            <label className="block text-gray-700 font-bold mb-2">
               Email
             </label>
             <input
@@ -105,14 +105,14 @@ export const Register: React.FC = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-teal-500 focus:bg-white text-gray-900"
               placeholder="john.doe@university.edu"
               required
             />
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium mb-2">
+            <label className="block text-gray-700 font-bold mb-2">
               Password
             </label>
             <input
@@ -120,14 +120,14 @@ export const Register: React.FC = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-teal-500 focus:bg-white text-gray-900"
               placeholder="Enter password"
               required
             />
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium mb-2">
+            <label className="block text-gray-700 font-bold mb-2">
               Confirm Password
             </label>
             <input
@@ -135,7 +135,7 @@ export const Register: React.FC = () => {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-teal-500 focus:bg-white text-gray-900"
               placeholder="Confirm password"
               required
             />
@@ -144,7 +144,7 @@ export const Register: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            className="w-full bg-yellow-400 text-teal-900 py-3 rounded-lg font-bold hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
             {loading ? 'Creating Account...' : 'Register'}
           </button>
@@ -152,7 +152,7 @@ export const Register: React.FC = () => {
 
         <p className="text-center text-gray-600 mt-4">
           Already have an account?{' '}
-          <a href="/login" className="text-purple-600 hover:text-purple-700 font-semibold">
+          <a href="/login" className="text-teal-600 hover:text-teal-700 font-bold">
             Login here
           </a>
         </p>

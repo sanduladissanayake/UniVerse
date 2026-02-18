@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { EventCard } from '../components/EventCard';
+import { Chatbot } from '../components/Chatbot';
 import { eventAPI, clubAPI } from '../services/api';
 
 
@@ -345,7 +346,8 @@ export function HomePage() {
         </div>
       </section>
 
-      
+      {/* Chatbot Widget */}
+      <Chatbot />
     </div>
   );
 }
