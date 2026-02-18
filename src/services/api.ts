@@ -1,12 +1,14 @@
-// API Configuration - Simple and Easy to Understand
-const API_BASE_URL = 'http://localhost:8080/api';
+// API Configuration - Simple Fetch Implementation
+const API_BASE_URL = 'http://localhost:8081/api';
 
 // Helper function to get token from localStorage
 const getToken = () => {
   return localStorage.getItem('token');
 };
 
-// Auth API Functions
+// =========================
+// AUTHENTICATION API
+// =========================
 export const authAPI = {
   // Register a new user
   register: async (userData: any) => {
@@ -44,220 +46,271 @@ export const authAPI = {
     return response.json();
   },
 };
-});
 
-// Add auth token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// =========================
+// CLUB API
+// =========================
+export const clubAPI = {
+  // Get all clubs
+  getAllClubs: async () => {
+    const response = await fetch(`${API_BASE_URL}/clubs`);
+    return response.json();
+  },
 
-// Response interceptor for error handling
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Handle unauthorized access
-      localStorage.removeItem('auth_token');
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
+  // Get club by ID
+  getClubById: async (id: number) => {
+    const response = await fetch(`${API_BASE_URL}/clubs/${id}`);
+    return response.json();
+  },
 
-// Auth Service
-export const authService = {
-  login: async (email: string, password: string): Promise<ApiResponse<{ user: User; token: string }>> => {
-    const response: AxiosResponse<ApiResponse<{ user: User; token: string }>> = await api.post('/auth/login', {
-      email,
-      password,
+  // Get club events
+  getClubEvents: async (clubId: number) => {
+    const response = await fetch(`${API_BASE_URL}/clubs/${clubId}/events`);
+    return response.json();
+  },
+
+  // Get club members
+  getClubMembers: async (clubId: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/memberships/club/${clubId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
     });
-    
-    if (response.data.success) {
-      localStorage.setItem('auth_token', response.data.data.token);
-    }
-    
-    return response.data;
+    return response.json();
   },
 
-  register: async (userData: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-    studentId?: string;
-  }): Promise<ApiResponse<{ user: User; token: string }>> => {
-    const response: AxiosResponse<ApiResponse<{ user: User; token: string }>> = await api.post('/auth/register', userData);
-    
-    if (response.data.success) {
-      localStorage.setItem('auth_token', response.data.data.token);
-    }
-    
-    return response.data;
+  // Create a club (Admin only)
+  createClub: async (clubData: any) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/clubs`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(clubData),
+    });
+    return response.json();
   },
 
-  logout: () => {
-    localStorage.removeItem('auth_token');
+  // Update club (Admin only)
+  updateClub: async (id: number, clubData: any) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/clubs/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(clubData),
+    });
+    return response.json();
   },
 
-  getCurrentUser: async (): Promise<ApiResponse<User>> => {
-    const response: AxiosResponse<ApiResponse<User>> = await api.get('/auth/me');
-    return response.data;
-  },
-};
-
-// Events Service
-export const eventsService = {
-  getEvents: async (params?: {
-    page?: number;
-    limit?: number;
-    category?: string;
-    search?: string;
-  }): Promise<PaginatedResponse<Event>> => {
-    const response: AxiosResponse<PaginatedResponse<Event>> = await api.get('/events', { params });
-    return response.data;
-  },
-
-  getEvent: async (id: string): Promise<ApiResponse<Event>> => {
-    const response: AxiosResponse<ApiResponse<Event>> = await api.get(`/events/${id}`);
-    return response.data;
-  },
-
-  createEvent: async (eventData: CreateEventForm): Promise<ApiResponse<Event>> => {
-    const response: AxiosResponse<ApiResponse<Event>> = await api.post('/events', eventData);
-    return response.data;
-  },
-
-  updateEvent: async (id: string, eventData: Partial<CreateEventForm>): Promise<ApiResponse<Event>> => {
-    const response: AxiosResponse<ApiResponse<Event>> = await api.put(`/events/${id}`, eventData);
-    return response.data;
-  },
-
-  deleteEvent: async (id: string): Promise<ApiResponse<void>> => {
-    const response: AxiosResponse<ApiResponse<void>> = await api.delete(`/events/${id}`);
-    return response.data;
-  },
-
-  registerForEvent: async (eventId: string): Promise<ApiResponse<void>> => {
-    const response: AxiosResponse<ApiResponse<void>> = await api.post(`/events/${eventId}/register`);
-    return response.data;
-  },
-
-  unregisterFromEvent: async (eventId: string): Promise<ApiResponse<void>> => {
-    const response: AxiosResponse<ApiResponse<void>> = await api.delete(`/events/${eventId}/register`);
-    return response.data;
+  // Delete club (Admin only)
+  deleteClub: async (id: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/clubs/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return response.json();
   },
 };
 
-// Clubs Service
-export const clubsService = {
-  getClubs: async (params?: {
-    page?: number;
-    limit?: number;
-    category?: string;
-    search?: string;
-  }): Promise<PaginatedResponse<Club>> => {
-    const response: AxiosResponse<PaginatedResponse<Club>> = await api.get('/clubs', { params });
-    return response.data;
+// =========================
+// EVENT API
+// =========================
+export const eventAPI = {
+  // Get all events
+  getAllEvents: async () => {
+    const response = await fetch(`${API_BASE_URL}/events`);
+    return response.json();
   },
 
-  getClub: async (id: string): Promise<ApiResponse<Club>> => {
-    const response: AxiosResponse<ApiResponse<Club>> = await api.get(`/clubs/${id}`);
-    return response.data;
+  // Get event by ID
+  getEventById: async (id: number) => {
+    const response = await fetch(`${API_BASE_URL}/events/${id}`);
+    return response.json();
   },
 
-  createClub: async (clubData: CreateClubForm): Promise<ApiResponse<Club>> => {
-    const response: AxiosResponse<ApiResponse<Club>> = await api.post('/clubs', clubData);
-    return response.data;
+  // Get events by club
+  getEventsByClub: async (clubId: number) => {
+    const response = await fetch(`${API_BASE_URL}/events/club/${clubId}`);
+    return response.json();
   },
 
-  updateClub: async (id: string, clubData: Partial<CreateClubForm>): Promise<ApiResponse<Club>> => {
-    const response: AxiosResponse<ApiResponse<Club>> = await api.put(`/clubs/${id}`, clubData);
-    return response.data;
+  // Create event (Club Admin only)
+  createEvent: async (eventData: any) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/events`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(eventData),
+    });
+    return response.json();
   },
 
-  deleteClub: async (id: string): Promise<ApiResponse<void>> => {
-    const response: AxiosResponse<ApiResponse<void>> = await api.delete(`/clubs/${id}`);
-    return response.data;
+  // Update event (Club Admin only)
+  updateEvent: async (id: number, eventData: any) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/events/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(eventData),
+    });
+    return response.json();
   },
 
-  joinClub: async (clubId: string): Promise<ApiResponse<void>> => {
-    const response: AxiosResponse<ApiResponse<void>> = await api.post(`/clubs/${clubId}/join`);
-    return response.data;
-  },
-
-  leaveClub: async (clubId: string): Promise<ApiResponse<void>> => {
-    const response: AxiosResponse<ApiResponse<void>> = await api.delete(`/clubs/${clubId}/leave`);
-    return response.data;
-  },
-
-  getClubMembers: async (clubId: string): Promise<ApiResponse<User[]>> => {
-    const response: AxiosResponse<ApiResponse<User[]>> = await api.get(`/clubs/${clubId}/members`);
-    return response.data;
-  },
-};
-
-// Announcements Service
-export const announcementsService = {
-  getAnnouncements: async (params?: {
-    page?: number;
-    limit?: number;
-    priority?: string;
-  }): Promise<PaginatedResponse<Announcement>> => {
-    const response: AxiosResponse<PaginatedResponse<Announcement>> = await api.get('/announcements', { params });
-    return response.data;
-  },
-
-  getAnnouncement: async (id: string): Promise<ApiResponse<Announcement>> => {
-    const response: AxiosResponse<ApiResponse<Announcement>> = await api.get(`/announcements/${id}`);
-    return response.data;
-  },
-
-  createAnnouncement: async (announcementData: CreateAnnouncementForm): Promise<ApiResponse<Announcement>> => {
-    const response: AxiosResponse<ApiResponse<Announcement>> = await api.post('/announcements', announcementData);
-    return response.data;
-  },
-
-  updateAnnouncement: async (id: string, announcementData: Partial<CreateAnnouncementForm>): Promise<ApiResponse<Announcement>> => {
-    const response: AxiosResponse<ApiResponse<Announcement>> = await api.put(`/announcements/${id}`, announcementData);
-    return response.data;
-  },
-
-  deleteAnnouncement: async (id: string): Promise<ApiResponse<void>> => {
-    const response: AxiosResponse<ApiResponse<void>> = await api.delete(`/announcements/${id}`);
-    return response.data;
+  // Delete event (Club Admin only)
+  deleteEvent: async (id: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/events/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return response.json();
   },
 };
 
-// Users Service
-export const usersService = {
-  getUsers: async (params?: {
-    page?: number;
-    limit?: number;
-    role?: string;
-    search?: string;
-  }): Promise<PaginatedResponse<User>> => {
-    const response: AxiosResponse<PaginatedResponse<User>> = await api.get('/users', { params });
-    return response.data;
+// =========================
+// MEMBERSHIP API
+// =========================
+export const membershipAPI = {
+  // Join a club
+  joinClub: async (userId: number, clubId: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/memberships/join`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ userId, clubId }),
+    });
+    return response.json();
   },
 
-  getUser: async (id: string): Promise<ApiResponse<User>> => {
-    const response: AxiosResponse<ApiResponse<User>> = await api.get(`/users/${id}`);
-    return response.data;
+  // Leave a club
+  leaveClub: async (userId: number, clubId: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/memberships/leave?userId=${userId}&clubId=${clubId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return response.json();
   },
 
-  updateUser: async (id: string, userData: Partial<User>): Promise<ApiResponse<User>> => {
-    const response: AxiosResponse<ApiResponse<User>> = await api.put(`/users/${id}`, userData);
-    return response.data;
+  // Get user memberships
+  getUserMemberships: async (userId: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/memberships/user/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return response.json();
   },
 
-  deleteUser: async (id: string): Promise<ApiResponse<void>> => {
-    const response: AxiosResponse<ApiResponse<void>> = await api.delete(`/users/${id}`);
-    return response.data;
+  // Get club members
+  getClubMembers: async (clubId: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/memberships/club/${clubId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return response.json();
   },
 };
 
-export default api;
+// =========================
+// ADMIN API
+// =========================
+export const adminAPI = {
+  // Get all users (Super Admin only)
+  getAllUsers: async () => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/admin/users`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return response.json();
+  },
+
+  // Get all clubs (Admin)
+  getAllClubs: async () => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/clubs`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return response.json();
+  },
+
+  // Get club admins (Super Admin only)
+  getClubAdmins: async () => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/admin/club-admins`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return response.json();
+  },
+
+  // Create club admin (Super Admin only)
+  createClubAdmin: async (userData: any) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/admin/club-admins`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(userData),
+    });
+    return response.json();
+  },
+
+  // Update user (Super Admin only)
+  updateUser: async (id: number, userData: any) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/admin/users/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(userData),
+    });
+    return response.json();
+  },
+
+  // Delete user (Super Admin only)
+  deleteUser: async (id: number) => {
+    const token = getToken();
+    const response = await fetch(`${API_BASE_URL}/admin/users/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return response.json();
+  },
+};

@@ -9,6 +9,7 @@ interface Club {
   description: string;
   logoUrl?: string;
   adminId: number;
+  membershipFee?: number;
 }
 
 export const ClubList: React.FC = () => {
@@ -53,23 +54,6 @@ export const ClubList: React.FC = () => {
     }
   };
 
-  const handleJoinClub = async (clubId: number) => {
-    if (!user) {
-      alert('Please login to join a club');
-      return;
-    }
-
-    try {
-      const response = await membershipAPI.joinClub(user.id, clubId);
-      if (response.success) {
-        setJoinedClubs([...joinedClubs, clubId]);
-        alert('Successfully joined the club!');
-      }
-    } catch (err) {
-      alert('Failed to join club');
-    }
-  };
-
   const filteredClubs = clubs.filter(club =>
     club.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     club.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -87,15 +71,14 @@ export const ClubList: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-purple-900/20 to-gray-900">
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 py-20">
-        <div className="absolute inset-0 bg-black/30" />
+      <div className="relative bg-gradient-to-r from-teal-600 to-teal-500 py-20">
         <div className="relative max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
-            University Clubs
+          <h1 className="text-5xl md:text-6xl font-black text-white mb-4">
+            University <span className="text-yellow-300">Clubs</span>
           </h1>
-          <p className="text-xl text-white/90 mb-8">Discover and join clubs that match your interests</p>
+          <p className="text-xl text-teal-50 mb-8">Discover and join clubs that match your interests</p>
           
           <div className="max-w-2xl mx-auto">
             <input
@@ -103,7 +86,7 @@ export const ClubList: React.FC = () => {
               placeholder="Search clubs..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-6 py-4 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-white/50 shadow-2xl"
+              className="w-full px-6 py-4 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:border-2 focus:border-teal-600 shadow-lg font-semibold"
             />
           </div>
         </div>
@@ -113,14 +96,14 @@ export const ClubList: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 py-12">
 
         {error && (
-          <div className="bg-red-500/20 border border-red-500 text-red-200 px-6 py-4 rounded-lg mb-8 backdrop-blur-sm">
+          <div className="bg-red-50 border-2 border-red-200 text-red-700 px-6 py-4 rounded-lg mb-8 font-semibold">
             {error}
           </div>
         )}
 
         {filteredClubs.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-white/70 text-xl">No clubs found</p>
+            <p className="text-gray-600 text-xl font-semibold">No clubs found</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -128,7 +111,6 @@ export const ClubList: React.FC = () => {
               <ClubCard
                 key={club.id}
                 club={club}
-                onJoin={handleJoinClub}
                 isJoined={joinedClubs.includes(club.id)}
               />
             ))}
