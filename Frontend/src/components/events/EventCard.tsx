@@ -9,7 +9,9 @@ interface EventCardProps {
     description: string;
     eventDate: string;
     location: string;
-    club: {
+    photoUrl?: string;
+    clubId?: number;
+    club?: {
       id: number;
       name: string;
       logoUrl?: string;
@@ -36,39 +38,52 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
     });
   };
 
-  const isUpcoming = new Date(event.eventDate) > new Date();
+  const isUpcoming = event.eventDate ? new Date(event.eventDate) > new Date() : false;
+  const clubId = event.club?.id || event.clubId;
+  const clubName = event.club?.name || 'Club';
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+    <div className="bg-teal-50 border-2 border-teal-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:border-teal-400 transition-all">
       <div className={`h-2 ${isUpcoming ? 'bg-green-500' : 'bg-gray-400'}`} />
+      
+      {/* Event Photo Banner */}
+      {event.photoUrl && (
+        <div className="h-32 overflow-hidden bg-gray-200">
+          <img 
+            src={event.photoUrl} 
+            alt={event.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
       
       <div className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <Link 
+          <Link 
               to={`/events/${event.id}`}
-              className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+              className="text-xl font-semibold text-gray-900 hover:text-teal-600 transition-colors"
             >
               {event.title}
             </Link>
-            {event.club && (
+            {clubId && (
               <Link 
-                to={`/clubs/${event.club.id}`}
-                className="text-sm text-gray-600 hover:text-blue-600 flex items-center mt-1"
+                to={`/clubs/${clubId}`}
+                className="text-sm text-gray-600 hover:text-teal-600 flex items-center mt-1"
               >
                 <Users className="w-4 h-4 mr-1" />
-                {event.club.name}
+                <span>Organized by: <span className="font-medium">{clubName}</span></span>
               </Link>
             )}
           </div>
           
-          {event.club?.logoUrl && (
+          {/* {event.club?.logoUrl && (
             <img 
               src={event.club.logoUrl} 
-              alt={event.club.name}
+              alt={clubName}
               className="w-12 h-12 rounded-full object-cover"
             />
-          )}
+          )} */}
         </div>
 
         <p className="text-gray-700 mb-4 line-clamp-2">
@@ -95,12 +110,12 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
               ? 'bg-green-100 text-green-800' 
               : 'bg-gray-100 text-gray-800'
           }`}>
-            {isUpcoming ? 'Upcoming' : 'Past Event'}
+            {event.eventDate && (isUpcoming ? 'Upcoming' : 'Past Event')}
           </span>
 
           <Link
             to={`/events/${event.id}`}
-            className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+            className="text- hover:text-yellow-600 text-sm font-bold"
           >
             View Details →
           </Link>

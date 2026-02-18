@@ -10,13 +10,16 @@ interface Event {
   description: string;
   eventDate: string;
   location: string;
-  club: {
+  photoUrl?: string;
+  clubId?: number;
+  createdBy?: number;
+  club?: {
     id: number;
     name: string;
     logoUrl?: string;
     description: string;
   };
-  createdBy: {
+  user?: {
     id: number;
     firstName: string;
     lastName: string;
@@ -41,9 +44,18 @@ export const EventDetails: React.FC = () => {
   const fetchEventDetails = async () => {
     try {
       setLoading(true);
-      const data = await eventAPI.getEventById(Number(id));
-      setEvent(data);
       setError('');
+      const response = await eventAPI.getEventById(Number(id));
+      // Handle API response format
+      if (response && response.success && response.event) {
+        setEvent(response.event);
+      } else if (response && response.event) {
+        setEvent(response.event);
+      } else if (response && response.id) {
+        setEvent(response);
+      } else {
+        setError('Event not found');
+      }
     } catch (err) {
       setError('Failed to load event details.');
       console.error(err);
@@ -89,7 +101,7 @@ export const EventDetails: React.FC = () => {
   };
 
   const isUpcoming = event && new Date(event.eventDate) > new Date();
-  const canManageEvent = user && (user.role === 'SUPER_ADMIN' || (user.role === 'CLUB_ADMIN' && event?.createdBy.id === user.id));
+  const canManageEvent = user && (user.role === 'SUPER_ADMIN' || (user.role === 'CLUB_ADMIN' && (event?.createdBy === user.id || event?.user?.id === user.id)));
 
   if (loading) {
     return (
@@ -117,7 +129,8 @@ export const EventDetails: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8">
+      <div className="max-w-4xl mx-auto px-4">
       {/* Back button */}
       <button
         onClick={() => navigate('/events')}
@@ -141,6 +154,17 @@ export const EventDetails: React.FC = () => {
       {/* Event header */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
         <div className={`h-3 ${isUpcoming ? 'bg-green-500' : 'bg-gray-400'}`} />
+        
+        {/* Event Photo Banner */}
+        {event.photoUrl && (
+          <div className="h-64 overflow-hidden bg-gray-200">
+            <img 
+              src={event.photoUrl} 
+              alt={event.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
         
         <div className="p-8">
           <div className="flex justify-between items-start mb-6">
@@ -184,12 +208,23 @@ export const EventDetails: React.FC = () => {
 
             <div className="flex items-center text-gray-700">
               <Users className="w-5 h-5 mr-3 text-blue-600" />
-              <Link 
-                to={`/clubs/${event.club.id}`}
-                className="hover:text-blue-600 transition-colors"
-              >
-                Organized by <span className="font-medium">{event.club.name}</span>
-              </Link>
+              {event.club ? (
+                <Link 
+                  to={`/clubs/${event.club.id}`}
+                  className="hover:text-blue-600 transition-colors"
+                >
+                  Organized by <span className="font-medium">{event.club.name}</span>
+                </Link>
+              ) : event.clubId ? (
+                <Link 
+                  to={`/clubs/${event.clubId}`}
+                  className="hover:text-blue-600 transition-colors"
+                >
+                  Organized by club
+                </Link>
+              ) : (
+                <span>Organized by club</span>
+              )}
             </div>
           </div>
 
@@ -204,6 +239,7 @@ export const EventDetails: React.FC = () => {
       </div>
 
       {/* Club info card */}
+      {event.club && (
       <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Organized by</h2>
         
@@ -229,9 +265,10 @@ export const EventDetails: React.FC = () => {
           </span>
         </Link>
       </div>
+      )}
 
       {/* Action buttons */}
-      {isUpcoming && (
+      {isUpcoming && event.club && (
         <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
           <h3 className="font-semibold text-gray-900 mb-2">Interested in this event?</h3>
           <p className="text-gray-700 mb-4">
@@ -245,6 +282,7 @@ export const EventDetails: React.FC = () => {
           </Link>
         </div>
       )}
+      </div>
     </div>
   );
 };
